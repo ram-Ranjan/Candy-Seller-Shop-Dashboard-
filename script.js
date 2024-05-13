@@ -1,17 +1,17 @@
 
 
-const crudCrudUrl = "https://crudcrud.com/api/fbda7253e45d4828b69cc0945dbae737/candies";
+const crudCrudUrl = "https://crudcrud.com/api/25df059a0e9e4599bbfa91ea31761027/candies";
 
 
 function fetchAndDisplayCandies() {
   axios.get(crudCrudUrl)
-      .then((res) => {
-          const candies = res.data;
-          const ul = document.querySelector("#chocoList");
-          ul.innerHTML = ""; // Clear the list before appending new items
-          candies.forEach(candy =>   displayChoco(candy));       
-      })
-      .catch((err) => console.log(err));
+    .then((res) => {
+      const candies = res.data;
+      const ul = document.querySelector("#chocoList");
+      ul.innerHTML = ""; // Clear the list before appending new items
+      candies.forEach(candy => displayChoco(candy));
+    })
+    .catch((err) => console.log(err));
 }
 
 window.addEventListener('DOMContentLoaded', fetchAndDisplayCandies);
@@ -19,20 +19,20 @@ window.addEventListener('DOMContentLoaded', fetchAndDisplayCandies);
 
 
 function saveChoco(event) {
-    event.preventDefault();
-    
-    let candyName = event.target.candyName.value;
-    let desc = event.target.desc.value;
-    let price = event.target.price.value;
-    let quantity = event.target.quantity.value;
-    let candy = { candyName: candyName, desc: desc, price: price, quantity: quantity };
+  event.preventDefault();
 
-    axios.post(crudCrudUrl, candy)
-        .then((res) => {
-            console.log(res.data);
-            fetchAndDisplayCandies(); // Fetch and display updated list
-        })
-        .catch((err) => console.log(err));
+  let candyName = event.target.candyName.value;
+  let desc = event.target.desc.value;
+  let price = event.target.price.value;
+  let quantity = event.target.quantity.value;
+  let candy = { candyName: candyName, desc: desc, price: price, quantity: quantity };
+
+  axios.post(crudCrudUrl, candy)
+    .then((res) => {
+      console.log(res.data);
+      fetchAndDisplayCandies(); // Fetch and display updated list
+    })
+    .catch((err) => console.log(err));
 }
 
 function displayChoco(candy) {
@@ -60,39 +60,33 @@ function displayChoco(candy) {
 
 function buyCandy(candyId, quantity, currentQuantity) {
   const newQuantity = currentQuantity - quantity;
-  if (newQuantity >= 0) {
-    axios.get(`${crudCrudUrl}/${candyId}`)
-      .then((res) => {
-       // console.log(res.data)
-         let {_id,...chocolate} = res.data;
-         console.log(chocolate)
-         console.log(chocolate._id)
-        // console.log(newQuantity)
-
-        if (chocolate) {
-          // console.log(chocolate._id)
-          chocolate.quantity = newQuantity;
-          // console.log("************************ Data updating****************")
-          // console.log(chocolate)
-          // console.log(chocolate._id)
-          
-          
-           const updatedChocolate = { ...chocolate, quantity: newQuantity };
-
-          axios.put(`${crudCrudUrl}/${candyId}`,chocolate)
-            .then((res) => {
-              console.log(`Bought ${quantity} ${chocolate.candyName}`);
-             fetchAndDisplayCandies()
-            })
-            .catch((err) => console.log(err.message));
-        } 
-        else {
-          console.log(`Candy not found with ID ${candyId}`);
-        }
-      })
-      .catch((err) => console.log(err));
-  } else {
-    console.log(`Not enough candy in stock`);
+  if (newQuantity < 0) {
+    alert("Not enough candies in stock");
+    return
   }
-}
+
+  axios.get(`${crudCrudUrl}/${candyId}`)
+    .then((res) => {
+
+      let { _id, ...candy } = res.data;
+      //const candy = res.data;
+      // console.log(candy)
+      if (!candy) {
+        console.log(`Candy not found with ID ${candyId}`);
+        return;
+      }
+
+      const updatedCandy = { ...candy, quantity: newQuantity };
+      return axios.put(`${crudCrudUrl}/${candyId}`, updatedCandy)
+        .then((res) => {
+          console.log(res.data);
+          fetchAndDisplayCandies()
+        })
+        .catch((err) => console.log(err.message));
+    })
+  }
+
+
+// 
+
 
