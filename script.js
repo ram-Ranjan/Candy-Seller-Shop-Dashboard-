@@ -1,22 +1,30 @@
 
 
-const crudCrudUrl = "https://crudcrud.com/api/bbad9ced22e947a6867ea644647d0ab1/candies";
-
+const crudCrudUrl = "https://crudcrud.com/api/a01383d958c2432296644b012dac0fee/candies";
+let total=0;
 
 function fetchAndDisplayCandies() {
+  total=0
   axios.get(crudCrudUrl)
     .then((res) => {
       const candies = res.data;
       const ul = document.querySelector("#chocoList");
       ul.innerHTML = ""; // Clear the list before appending new items
       candies.forEach(candy => displayChoco(candy));
+
+      updateTotal();
+      
+
     })
     .catch((err) => console.log(err));
 }
 
 window.addEventListener('DOMContentLoaded', fetchAndDisplayCandies);
 
-
+function updateTotal(){
+  let amount = document.querySelector('#total');
+  amount.value = total;
+}
 
 function saveChoco(event) {
   event.preventDefault();
@@ -28,7 +36,9 @@ function saveChoco(event) {
   let candy = { candyName: candyName, desc: desc, price: price, quantity: quantity };
 
 
-
+  if(!candy.candyName || !candy.desc || !candy.price || !candy.quantity){
+    return;
+  }
 
   axios.post(crudCrudUrl, candy)
     .then((res) => {
@@ -46,65 +56,78 @@ function displayChoco(candy) {
     return;
   }
   
+  
   let ul = document.querySelector("#chocoList");
   const li = document.createElement("li");
   ul.appendChild(li);
   li.innerHTML = ` ${candy.candyName} - ${candy.desc} - ${candy.price} - <span>${candy.quantity}</span>`;
 
+  const buyOneBtn = createBuyButton("One",candy);
+  const buyTwoBtn = createBuyButton("Two",candy)
+  const buyThreeBtn = createBuyButton("Three",candy)
 
-  const buyOneBtn = document.createElement("button");
-  buyOneBtn.textContent = "Buy One";
-  buyOneBtn.addEventListener("click", () => buyCandy(candy._id,  candy.quantity-1));
+  if(candy.price && candy.quantity)
+    total+=Number(candy.price)*Number(candy.quantity);
+
   li.appendChild(buyOneBtn);
-
-  const buyTwoBtn = document.createElement("button");
-  buyTwoBtn.textContent = "Buy Two";
-  buyTwoBtn.addEventListener("click", () => buyCandy(candy._id, candy.quantity-2));
   li.appendChild(buyTwoBtn);
-
-  const buyThreeBtn = document.createElement("button");
-  buyThreeBtn.textContent = "Buy Three";
-
-  buyThreeBtn.addEventListener("click", () => buyCandy(candy._id,  candy.quantity-3));
   li.appendChild(buyThreeBtn);
 }
+  
+  
+  function createBuyButton(quantity , candy){
+    const btn = document.createElement("button");
+    btn.textContent=`Buy ${quantity}`;
+    
+    btn.addEventListener("click",(event) => {
+      event.stopPropagation(); // Stop event propagation
+      const updatedQuantity = candy.quantity - (quantity === "One" ? 1 : quantity === "Two" ? 2 : 3);
+      buyCandy(candy._id,updatedQuantity)
+    });
+      return btn;
+  }
 
-function buyCandy(candyId, updatedQuantity) {
+
+
+
+
+
+function buyCandy(candyId,  updatedQuantity) {
+
 
   if(updatedQuantity<0){
     alert("Not enough candies in stock");
-    return
+    return;
   }
 
   if (updatedQuantity == 0) {
     
     axios.delete(`${crudCrudUrl}/${candyId}`)
-    fetchAndDisplayCandies()
-
-    return
+    .then(() => fetchAndDisplayCandies())
+    .catch((error) => console.log(error))
+  
+    return;
   }
 
-  axios.get(`${crudCrudUrl}/${candyId}`)
-    .then((res) => {
 
-      let { _id, ...candy } = res.data;
-      //const candy = res.data;
-       console.log(candy)
-      if (!candy) {
-        console.log(`Candy not found with ID ${candyId}`);
-        return;
-      }
+      axios.get(`${crudCrudUrl}/${candyId}`)
+      .then((response) => {
+        let { _id, ...candy } = response.data;
+
+        if (!candy) {
+          console.log(`Candy not found with ID ${candyId}`);
+          return;
+        }
 
       const updatedCandy = { ...candy, quantity: updatedQuantity };
-      return axios.put(`${crudCrudUrl}/${candyId}`, updatedCandy)
-        .then((res) => {
-          console.log(res.data);
+       axios.put(`${crudCrudUrl}/${candyId}`, updatedCandy)
+        .then(() => {
           fetchAndDisplayCandies()
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => console.log(err));
     })
+    .catch((err) => console.log(err));
   }
-
 
 
 
