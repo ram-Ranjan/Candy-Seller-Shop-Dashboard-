@@ -12,9 +12,7 @@ function fetchAndDisplayCandies() {
       ul.innerHTML = ""; // Clear the list before appending new items
       candies.forEach(candy => displayChoco(candy));
 
-      updateTotal();
-      
-
+      updateTotal()
     })
     .catch((err) => console.log(err));
 }
@@ -105,11 +103,8 @@ function buyCandy(candyId,  updatedQuantity) {
     axios.delete(`${crudCrudUrl}/${candyId}`)
     .then(() => fetchAndDisplayCandies())
     .catch((error) => console.log(error))
-  
     return;
   }
-
-
       axios.get(`${crudCrudUrl}/${candyId}`)
       .then((response) => {
         let { _id, ...candy } = response.data;

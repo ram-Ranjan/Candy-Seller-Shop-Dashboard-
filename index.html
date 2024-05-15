@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +8,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
     <h2>Candy Shop</h2>
-
-    <form id="formData" onsubmit="saveChoco(event)" >
-
-    
+    <form id="formData" onsubmit="saveChoco(event)">
 
         <label for="candyName">Candy Name:</label>
         <input type="text" id="candyName">
@@ -29,22 +26,16 @@
         <button type="submit">Add Item</button>
 
         <section id="total-sec">
-        <label for="total"> Total Price:</label>
-        <input type="number" id="total" value="" readonly="readonly">
-
+            <label for="total"> Total Price:</label>
+            <input type="number" id="total" value="" readonly="readonly">
         </section>
-
-        
-
-        
         <ul id="chocoList">
-            
         </ul>
-
     </form>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js"></script>
     <script src="script.js"></script>
 
 </body>
+
 </html>
