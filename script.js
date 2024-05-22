@@ -1,106 +1,109 @@
 
+const crudCrudUrl =
+  "https://crudcrud.com/api/22a7bd65cbf6490b8313f08e82bd61e2/candies";
+let total = 0;
+let candies = [];
 
-const crudCrudUrl = "https://crudcrud.com/api/a01383d958c2432296644b012dac0fee/candies";
-let total=0;
+fetchAndDisplayCandies();
+
 
 function fetchAndDisplayCandies() {
-  total=0
-  axios.get(crudCrudUrl)
+  axios
+    .get(crudCrudUrl)
     .then((res) => {
-      const candies = res.data;
-      const ul = document.querySelector("#chocoList");
-      ul.innerHTML = ""; // Clear the list before appending new items
-      candies.forEach(candy => displayChoco(candy));
-
-      updateTotal()
+      candies = res.data;
+      displayCandies();
+      updateTotal();
     })
     .catch((err) => console.log(err));
 }
 
-window.addEventListener('DOMContentLoaded', fetchAndDisplayCandies);
 
-function updateTotal(){
-  let amount = document.querySelector('#total');
-  amount.value = total;
-}
+//We dont need an event listener dirctly call the method at top
+ //window.addEventListener('DOMContentLoaded', fetchAndDisplayCandies);
 
-function saveChoco(event) {
+
+// Adding Candies
+//just add the form and create event listener on submit
+
+const candyForm = document.getElementById('candyForm');
+candyForm.addEventListener('submit',(event) => {
   event.preventDefault();
 
-  let candyName = event.target.candyName.value;
-  let desc = event.target.desc.value;
-  let price = event.target.price.value;
-  let quantity = event.target.quantity.value;
-  let candy = { candyName: candyName, desc: desc, price: price, quantity: quantity };
+  const candyName = event.target.candyName.value;
+  const desc = event.target.desc.value;
+  const price = event.target.price.value;
+  const quantity = event.target.quantity.value;
 
-
-  if(!candy.candyName || !candy.desc || !candy.price || !candy.quantity){
+  if (!candyName || !desc || !price || !quantity) {
     return;
   }
 
-  axios.post(crudCrudUrl, candy)
-    .then((res) => {
-      console.log(res.data);
-      fetchAndDisplayCandies(); // Fetch and display updated list
-    })
-    .catch((err) => console.log(err));
+  const candy = { candyName, desc, price, quantity };
 
-    document.querySelector("#formData").reset();
+  axios
+  .post(crudCrudUrl, candy)
+  .then(() => {
+    candyForm.reset();
+    fetchAndDisplayCandies();
+  })
+  .catch((err) => console.log(err));
+});
+
+
+function updateTotal() {
+  total = candies.reduce((acc, candy) => acc + candy.price * candy.quantity, 0);
+  document.getElementById("total").value = total;
 }
 
-function displayChoco(candy) {
+function displayCandies() {
+  const candyList = document.querySelector("#candyList");
+  candyList.innerHTML = ""; // Clear the list before appending new items
 
-  if(!candy.candyName || !candy.desc || !candy.price || !candy.quantity){
-    return;
-  }
-  
-  
-  let ul = document.querySelector("#chocoList");
-  const li = document.createElement("li");
-  ul.appendChild(li);
-  li.innerHTML = ` ${candy.candyName} - ${candy.desc} - ${candy.price} - <span>${candy.quantity}</span>`;
+  candies.forEach((candy) => {
+    const candyItem = document.createElement("div");
+    candyItem.classList.add("candy-item");
 
-  const buyOneBtn = createBuyButton("One",candy);
-  const buyTwoBtn = createBuyButton("Two",candy)
-  const buyThreeBtn = createBuyButton("Three",candy)
+    const candyInfo = document.createElement("div");
+    candyInfo.textContent = `${candy.candyName}  - ${candy.desc}  - ${candy.price} - quantity: ${candy.quantity}`;
 
-  if(candy.price && candy.quantity)
-    total+=Number(candy.price)*Number(candy.quantity);
+    const buyBtns = document.createElement("div");
+    buyBtns.appendChild(createBuyButton("One", candy));
+    buyBtns.appendChild(createBuyButton("Two", candy));
+    buyBtns.appendChild(createBuyButton("Three", candy));
 
-  li.appendChild(buyOneBtn);
-  li.appendChild(buyTwoBtn);
-  li.appendChild(buyThreeBtn);
+    // const candyItem = document.createElement("div")
+
+    candyItem.appendChild(candyInfo);
+    candyItem.appendChild(buyBtns);
+    candyList.appendChild(candyItem);
+   
+  });
 }
-  
-  
-  function createBuyButton(quantity , candy){
-    const btn = document.createElement("button");
-    btn.textContent=`Buy ${quantity}`;
-    
-    btn.addEventListener("click",(event) => {
-      event.stopPropagation(); // Stop event propagation
-      const updatedQuantity = candy.quantity - (quantity === "One" ? 1 : quantity === "Two" ? 2 : 3);
-      buyCandy(candy._id,updatedQuantity)
-    });
-      return btn;
-  }
 
+function createBuyButton(quantity, candy) {
+  const btn = document.createElement("button");
+  btn.textContent = `Buy ${quantity}`;
 
-
-
-
+  btn.addEventListener("click", () => {
+    const updatedQuantity =
+      candy.quantity - (quantity === "One" ? 1 : quantity === "Two" ? 2 : 3);
+    buyCandy(candy._id, updatedQuantity);
+  });
+  return btn;
+}
 
 function buyCandy(candyId,  updatedQuantity) {
-
 
   if(updatedQuantity<0){
     alert("Not enough candies in stock");
     return;
   }
 
-  if (updatedQuantity == 0) {
-    
-    axios.delete(`${crudCrudUrl}/${candyId}`)
+  if (updatedQuantity === 0) {
+
+    axios
+    .delete(`${crudCrudUrl}/${candyId}`)
     .then(() => fetchAndDisplayCandies())
     .catch((error) => console.log(error))
     return;
@@ -115,7 +118,8 @@ function buyCandy(candyId,  updatedQuantity) {
         }
 
       const updatedCandy = { ...candy, quantity: updatedQuantity };
-       axios.put(`${crudCrudUrl}/${candyId}`, updatedCandy)
+       axios
+       .put(`${crudCrudUrl}/${candyId}`, updatedCandy)
         .then(() => {
           fetchAndDisplayCandies()
         })
@@ -123,6 +127,5 @@ function buyCandy(candyId,  updatedQuantity) {
     })
     .catch((err) => console.log(err));
   }
-
 
 

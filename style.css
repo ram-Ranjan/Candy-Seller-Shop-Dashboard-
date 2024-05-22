@@ -1,97 +1,147 @@
+/* General styling */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-  }
-  
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  form {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f2f2f2;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  input[type="text"],
-  input[type="number"] {
-    width: 100%;
-    padding: 5px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-  }
-  
-  button[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
 
-  }
-  #quantity{
-    margin-bottom: 8%;
-  }
-  
-  button[type="submit"]:hover {
-    background-color: #45a049;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin-top: 20px;
-  }
-  
-  li {
-    background-color: #f9f9f9;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 3px;
-  }
-  #total-sec{
-    position: relative;
-    left: 50%;
-    bottom: 40px;
-    display: flex;
-    align-items: center;
-    gap: 5%;
-  }
-  #total{
-    width: 18%;
-    background-color: #f9f9f9;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 3px;
-    position: relative;
+/* Container styling */
+.container {
+  max-width: 90%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-    color: rgb(49, 34, 4);
-    font-weight: 600;
+/* Headings */
+h1, h2 {
+  color: #333333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Form styling */
+form {
+  margin-bottom: 30px;
+}
+
+.form-label {
+  font-weight: bold;
+  color: #555555;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+}
+
+/* Button styling */
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* Candy list styling */
+#candyList {
+  border-top: 1px solid #eeeeee;
+  padding-top: 20px;
+}
+
+.candy-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.candy-item:last-child {
+  border-bottom: none;
+}
+
+.candy-info {
+  font-size: 16px;
+  color: #333333;
+}
+
+.candy-item button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #28a745;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.candy-item button:hover {
+  background-color: #218838;
+}
+
+/* Total section styling */
+#total {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+      padding: 10px;
   }
- 
-  
-  li button {
-    margin-left: 10px;
-    background-color: #008CBA;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
+
+  .candy-item {
+      flex-direction: column;
+      align-items: flex-start;
   }
-  
-  li button:hover {
-    background-color: #0077b3;
+
+  .candy-info {
+      margin-bottom: 10px;
   }
+
+  .btn-primary {
+      width: 100%;
+  }
+
+  .candy-item button {
+      width: 100%;
+      margin: 5px 0;
+  }
+
+  h1, h2 {
+      font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+      max-width: 100%;
+      padding: 5px;
+  }
+
+  .candy-info {
+      font-size: 14px;
+  }
+
+  #total {
+      font-size: 18px;
+  }
+}
